@@ -1,0 +1,13 @@
+target/
+dbt_packages/
+dbt_internal_packages/
+logs/
+.user.yml
+
+# Never commit credentials
+profiles.yml
+*.json
+!package-lock.json
+
+.DS_Store
+.vscode/

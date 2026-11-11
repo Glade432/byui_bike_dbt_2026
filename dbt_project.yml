@@ -1,0 +1,52 @@
+name: byui_bike_dbt
+version: "0.1.0"
+
+# Must match a top-level key in ~/.dbt/profiles.yml.
+# Same name as the dbt Labs workshop starter, so this profile carries straight over.
+profile: university_workshop
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  byui_bike_dbt:
+    +static_analysis: strict   # same as the workshop starter repo
+    staging:
+      +materialized: view      # stg_ = cheap, always fresh
+    marts:
+      +materialized: table     # dim_ / fct_ = what people query
+
+seeds:
+  byui_bike_dbt:
+    # Seeds land in their own dataset: <your dataset>_raw, e.g. dbt_smith_john_raw.
+    +schema: raw
+
+    # Everything that looks like a date is loaded as TEXT on purpose,
+    # so YOU get to cast it in staging (just like a real raw table).
+    raw_rentals:
+      +column_types:
+        ID: string
+        RIDER: string
+        STATION_ID: string
+        STARTED_AT: string
+        ENDED_AT: string
+        MILES: float64
+        PRICE_CENTS: int64
+        KIOSK_VERSION: string
+    raw_riders:
+      +column_types:
+        id: string
+        full_name: string
+        signed_up_on: string
+        ssn: string
+    raw_stations:
+      +column_types:
+        id: string
+        station_name: string
+        city: string
+        opened_at: string
+        docks: int64
+        map_color_hex: string
