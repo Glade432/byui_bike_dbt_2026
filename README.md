@@ -6,8 +6,7 @@ a small, made-up bike-rental dataset:
 
 **seeds → sources → staging → dims + fact → tests**
 
-Somewhere in this data are **two riders named Son Goku** and **a Vegeta whose power level is
-over 9000** (miles per hour). Your tests will find him. 🐉
+Somewhere in this data are two crazy fast riders (miles per hour). Your tests will find them. 🐉
 
 ```mermaid
 flowchart LR
