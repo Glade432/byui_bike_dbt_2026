@@ -78,13 +78,42 @@ dbtf show --select dim_date
 
 ---
 
+## First: make the three mart files
+
+`dim_date.sql` is already in `models/marts/`. Add the other three:
+
+```bash
+touch models/marts/dim_stations.sql models/marts/dim_riders.sql models/marts/fct_rentals.sql   # creates 3 empty files
+ls models/marts/                                                                               # check they're there
+```
+
+✅ **Check:** you see `dim_date.sql`, `dim_riders.sql`, `dim_stations.sql`, `fct_rentals.sql`.
+
+> ⚠️ **Each model goes in its own file.** Before you paste anything, check the **tab name** at
+> the top of VS Code matches the model you're working on. Pasting `dim_riders` code into
+> `dim_stations.sql` is the #1 mistake on this page: everything "builds", then the tests fail
+> with `Unrecognized name: station_id`.
+
 ## Model 1 · `dim_stations` (easy)
 
-Create **`models/marts/dim_stations.sql`**. Select every column from `stg_stations`, using
-**`ref`** this time (not `source`).
+Open **`models/marts/dim_stations.sql`**. Select every column from `stg_stations`, using
+**`ref`** this time (not `source`). Fill in the blanks:
+
+```sql
+select
+    station_id,
+    ____,
+    ____,
+    opened_on,
+    ____,
+    is_large_station
+from {{ ref('____') }}
+```
+
+(Not sure what the columns are? `dbtf show --select stg_stations --limit 3`)
 
 <details>
-<summary>▶ Solution: <code>dim_stations.sql</code></summary>
+<summary>▶ Solution (paste into <code>dim_stations.sql</code> only)</summary>
 
 ```sql
 select
@@ -104,8 +133,8 @@ adds a column to staging, it doesn't silently show up here.
 
 ## Model 2 · `dim_riders` (a join!)
 
-Every rider, plus their ride totals. **Join** riders to a summary of their rentals. Fill in
-the blanks in **`models/marts/dim_riders.sql`**:
+Every rider, plus their ride totals. **Join** riders to a summary of their rentals. Open
+**`models/marts/dim_riders.sql`** and fill in the blanks:
 
 ```sql
 with riders as (
@@ -148,7 +177,7 @@ ____ join rider_totals
 🤔 **`left` or `inner` join?** What should happen to a rider who signed up but never rode?
 
 <details>
-<summary>▶ Solution: <code>dim_riders.sql</code></summary>
+<summary>▶ Solution (paste into <code>dim_riders.sql</code> only)</summary>
 
 ```sql
 with riders as (
@@ -195,13 +224,13 @@ That's also why there's a `coalesce(..., 0)`.
 
 ## Model 3 · `fct_rentals` (the middle of the star)
 
-Create **`models/marts/fct_rentals.sql`**: every column from `stg_rentals`, **plus** `day_name`
+Open **`models/marts/fct_rentals.sql`**: every column from `stg_rentals`, **plus** `day_name`
 and `is_weekend` from `dim_date`.
 
 **Hint:** join `stg_rentals.rental_date` to `dim_date.date_day`.
 
 <details>
-<summary>▶ Solution: <code>fct_rentals.sql</code></summary>
+<summary>▶ Solution (paste into <code>fct_rentals.sql</code> only)</summary>
 
 ```sql
 with rentals as (

@@ -15,7 +15,21 @@ Two kinds of tests:
 
 ## 1 · Schema tests for staging
 
-Create **`models/staging/_stg_bike.yml`**. `stg_riders` is done for you. Add the other two:
+Create **`models/staging/_stg_bike.yml`**.
+
+> 🧠 **Why that name?** dbt doesn't care what you call a `.yml` file. It reads **every**
+> `.yml` in `models/`. The name is for **humans**:
+>
+> | Part | Means |
+> |---|---|
+> | `_` (leading underscore) | Sorts to the **top** of the folder, above all the `.sql` files, so it's easy to find. Same reason it's `_sources.yml`. |
+> | `stg` | It describes the **staging** models |
+> | `bike` | The **source system** they come from |
+>
+> dbt Labs' own style guide does the same thing (`_<folder>__models.yml`). Some teams use
+> one `.yml` per model instead. Either is fine, as long as the whole team is consistent.
+
+`stg_riders` is done for you. Add the other two:
 
 ```yaml
 models:
@@ -48,9 +62,26 @@ models:
 > ⚠️ **Fusion syntax:** tests that take settings (`accepted_values`, `relationships`) put them
 > under **`arguments:`**. Older tutorials skip that line, and Fusion warns about it.
 
+> ⚠️ **YAML is picky about spaces.** Use spaces, never tabs. Each level is indented 2 more
+> than the one above it. If dbt complains about the file, compare your indenting to the
+> template line by line.
+
+📌 **Stuck?** The full `_stg_bike.yml` is in the
+[solutions at the bottom of this page](#-solutions).
+
+Run just the staging tests to check your file:
+
+```bash
+dbtf test --select staging
+```
+
+✅ **Check:** all of your staging schema tests pass. (`assert_no_impossible_speeds` doesn't
+exist yet, so nothing fails here. That comes in part 4.)
+
 ## 2 · Schema tests for marts
 
-Create **`models/marts/_marts.yml`**. The **`relationships`** test is the important new one: it
+Create **`models/marts/_marts.yml`** (same naming idea: `_` to sort it to the top, `marts`
+for the layer it describes). The **`relationships`** test is the important new one: it
 checks that every `rider_id` in the fact table **exists** in `dim_riders`.
 
 ```yaml
@@ -83,6 +114,8 @@ models:
       - name: station_id
         # your turn: relationships to dim_stations
 ```
+
+📌 **Stuck?** The full `_marts.yml` is in the [solutions at the bottom of this page](#-solutions).
 
 ## 3 · Two singular tests
 
@@ -192,6 +225,13 @@ today.
 
 </details>
 
+**Commit + push.** You've now done the whole workshop loop: **source → stage → model → test
+→ fix → ship.**
+
+---
+
+## 📌 Solutions
+
 <details>
 <summary>▶ Solution: full <code>models/staging/_stg_bike.yml</code></summary>
 
@@ -276,8 +316,6 @@ models:
 
 </details>
 
-**Commit + push.** You've now done the whole workshop loop: **source → stage → model → test
-→ fix → ship.**
 
 ---
 

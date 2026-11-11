@@ -448,7 +448,12 @@ Run all three together:
 dbtf run --select staging
 ```
 
-✅ **Check:** `3 total | 3 success`. **Commit + push** (Source Control → message → Commit →
+✅ **Check:** `3 total | 3 success`. In BigQuery, refresh your project. Your **own** dataset
+(no `_raw`) now has three `stg_` **views** (the dotted icon means *view*, not table):
+
+![Three stg_ views in your dataset](../images/04-bigquery-staging-views.png)
+
+**Commit + push** (Source Control → message → Commit →
 **Sync Changes**).
 
 That's today's goal. If you have time, keep going. 👇

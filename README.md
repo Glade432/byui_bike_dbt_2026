@@ -41,7 +41,10 @@ flowchart LR
 
 ## Before anything else
 
-**Step 0: sign the dbt Labs consent form:** <https://www.getdbt.com/university-student-consent-form>
+**Step 0: two quick forms from dbt Labs.** Do these first, maybe while WSL downloads:
+
+1. **Consent form:** <https://www.getdbt.com/university-student-consent-form>
+2. **Survey:** <https://dbtlearn.typeform.com/to/mL4TCYij>
 
 **You also need** your Google Cloud project, service account, and `bigquery-key.json` in your
 `.dbt` folder. If you haven't done that yet, do

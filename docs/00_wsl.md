@@ -247,8 +247,11 @@ VS Code stays installed on **Windows**. One extension lets it reach into Linux.
 
 ✅ **Check:** the **bottom-left corner** of VS Code says **`WSL: Ubuntu`**.
 
-4. Install the **dbt extension** *into WSL*: in this new window, **Extensions** → search
-   **dbt** → the same **dbt Labs LLC** one → click **Install in WSL: Ubuntu**.
+4. ⚠️ **Don't skip this one.** Install the **dbt extension** *into WSL*: in this new window,
+   **Extensions** → search **dbt** → the same **dbt Labs LLC** one → click
+   **Install in WSL: Ubuntu**. Without it, nothing dbt shows up in VS Code: no
+   **Preview CTE** buttons, no lineage. If it's already in WSL, it's listed under
+   **WSL: UBUNTU – INSTALLED** in the Extensions panel.
 5. When it asks you to **register**, use your **university email**. (Not prompted?
    `Ctrl+Shift+P` → type `register` → **dbt: Register dbt extension**.)
 
