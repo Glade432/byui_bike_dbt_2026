@@ -10,6 +10,8 @@
 | `0x80370102` / "enable Virtual Machine Platform" | Virtualization is off in the BIOS. **Raise your hand.** |
 | "The requested operation requires elevation" | PowerShell wasn't opened **as administrator** |
 | Typing my password shows nothing | Normal! Type it and press Enter. |
+| `ls /mnt/c/jane`: No such file or directory | You need `/Users/` in the middle: `/mnt/c/Users/jane` |
+| `N: Some packages may have been kept back due to phasing` | Harmless. Keep going. |
 | Forgot my Linux password | In **Windows PowerShell**: `wsl -u root passwd <your-linux-username>` |
 | `code: command not found` in Ubuntu | Close **all** VS Code windows and the Ubuntu terminal, reopen Ubuntu, try again. Still broken? Reinstall VS Code with **"Add to PATH"** checked. |
 | Warning about **UNC paths** when running a Windows program | Harmless. Ignore it. |
@@ -28,7 +30,7 @@
 | `Syntax error: Expected end of input but got keyword LIMIT` | You put `limit` inside `dbtf show --inline "..."`. Use `--limit 20` after the quotes. |
 | `[warning] UnusedResourceConfigPath ... staging` | Harmless. Goes away once `models/staging/` has a model. |
 | Column `ssn` not found | 🎉 Good. It shouldn't exist past staging. |
-| Only one Son Goku left | You deduped on `full_name`. Dedup on the **id**. |
+| Only one Jordan Smith left | You deduped on `full_name`. Dedup on the **id**. |
 
 ## Git / GitHub
 

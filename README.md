@@ -61,13 +61,15 @@ Each page links to the next one. Just keep clicking **Next →**.
 | 3 | [Sources](docs/03_sources.md) | Tell dbt where the raw tables live | 5 min |
 | 4 | [Staging](docs/04_staging.md) | Rename, cast, dedup, new column ×3 | 15 min |
 | 5 | [Dims + fact](docs/05_marts.md) | Build the star schema | 10 min |
-| 6 | [Tests](docs/06_tests.md) | Catch Vegeta. Fix staging. Go green. | 7 min |
+| 6 | [Tests](docs/06_tests.md) | Catch the bad rows. Fix staging. Go green. | 7 min |
 | 7 | [Stretch: a mart](docs/07_stretch_mart.md) | Answer a real question | bonus |
 
 **🎯 The goal for today is to finish staging (page 4).** Anything after that is great, and
 whatever's left is fine to finish at home.
 
-**Handy pages:** [Cheat sheet](docs/cheatsheet.md) · [Troubleshooting](docs/troubleshooting.md)
+**Handy pages:** [Cheat sheet](docs/cheatsheet.md) ·
+[SQL types + casting primer](docs/sql_types_and_casting.md) ·
+[Troubleshooting](docs/troubleshooting.md)
 
 Every page has the answers hidden in **▶ Solution** boxes. Try first, peek if stuck.
 
@@ -76,7 +78,7 @@ Every page has the answers hidden in **▶ Solution** boxes. Try first, peek if 
 ## What's in this repo
 
 ```
-seeds/            the 3 raw CSVs (fake data, fake SSNs, real Saiyans)
+seeds/            the 3 raw CSVs (fake data, fake SSNs)
 models/marts/     dim_date.sql (free, already written)
 models/staging/   empty: you fill this
 tests/            empty: you fill this

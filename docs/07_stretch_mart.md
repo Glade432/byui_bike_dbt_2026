@@ -73,22 +73,6 @@ in your `plan.md`:
 <what would you tell the bike company to do?>
 ```
 
-### 🐉 Bonus question
-
-Vegeta vs. Goku: **who rides more, and who spends more?** (Careful: there are two Gokus.)
-
-```bash
-dbtf show --inline "select rider_id, full_name, total_rides, lifetime_spend from {{ ref('dim_riders') }} where full_name in ('Son Goku', 'Prince Vegeta')"
-```
-
-<details>
-<summary>▶ Answer</summary>
-
-Vegeta takes the **most rides**, but the busier Goku (`R-1017`) **spends the most**. Longer
-rides cost more. Rivals to the end. 🤝
-
-</details>
-
 **Commit + push.** You're ready for the workshop. 🚲
 
 ---

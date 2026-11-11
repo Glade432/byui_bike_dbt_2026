@@ -250,13 +250,13 @@ dbtf run --select marts
 dbtf show --inline "select full_name, total_rides, lifetime_spend from {{ ref('dim_riders') }} order by total_rides desc" --limit 5
 ```
 
-Some familiar names near the top. 🐉 Now look at the fastest rides:
+Now look at the fastest rides:
 
 ```bash
 dbtf show --inline "select rental_id, rider_id, miles, ride_minutes, mph from {{ ref('fct_rentals') }} order by mph desc" --limit 5
 ```
 
-…**over 9,000 mph?** 😳 Hold that thought. The next page builds a test to catch exactly this.
+…**over 9,000 mph on a bike?** Hold that thought. The next page builds a test to catch exactly this.
 
 **Commit + push.**
 

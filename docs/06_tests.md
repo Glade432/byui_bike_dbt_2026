@@ -8,7 +8,7 @@ Two kinds of tests:
 |---|---|---|
 | Live in | `.yml` files next to your models | `.sql` files in **`tests/`** |
 | Written as | one word: `unique`, `not_null`, ... | a `select` that finds **bad rows** |
-| Good for | keys and relationships (every project needs these) | business rules ("no bike goes 9,000 mph") |
+| Good for | keys and relationships (every project needs these) | business rules ("no bike goes faster than 30 mph") |
 | Passes when | — | the query returns **0 rows** |
 
 ---
@@ -86,22 +86,22 @@ models:
 
 ## 3 · Two singular tests
 
-Create **`tests/assert_both_gokus_survive.sql`**:
+Create **`tests/assert_same_name_riders_survive.sql`**:
 
 ```sql
--- There are TWO different riders named Son Goku (different rider_ids).
+-- There are TWO different riders named Jordan Smith (different rider_ids).
 -- If your dedup used the name instead of the id, one of them vanished.
--- Returns a row (= fails) unless exactly 2 Gokus made it through staging.
-select count(*) as goku_count
+-- Returns a row (= fails) unless exactly 2 made it through staging.
+select count(*) as jordan_smith_count
 from {{ ref('stg_riders') }}
-where full_name = 'Son Goku'
+where full_name = 'Jordan Smith'
 having count(*) != 2
 ```
 
 Create **`tests/assert_no_impossible_speeds.sql`**:
 
 ```sql
--- A bike can't go faster than 30 mph. Not even if your power level is over 9000.
+-- A bike can't go faster than 30 mph.
 -- This test PASSES when this query returns zero rows.
 select
     rental_id,
@@ -150,8 +150,7 @@ dbtf show --inline "select rental_id, rider_id, miles, ride_minutes, mph from {{
 | RNT-00087 | R-1017 | 48.0 | 1 | 2880.0 |
 | RNT-00088 | R-1009 | 310.4 | 2 | 9312.0 |
 
-`R-1009` is **Vegeta**. Over 9000. 😤 `R-1017` is one of the Gokus (Instant Transmission
-doesn't count as riding a bike).
+Two riders, three rides, all impossible: 48 to 310 miles in one or two minutes.
 
 ## 5 · Fix it in staging
 
@@ -168,8 +167,8 @@ dbtf build
 > from. Fix it once there and `dim_riders`, `fct_rentals`, and anything built later are all
 > clean.
 >
-> 🧠 **Notice:** Vegeta and Goku are still in `dim_riders`. We removed bad **rentals**, not
-> **riders**. Check: `dbtf show --select dim_riders --limit 5`
+> 🧠 **Notice:** riders `R-1009` and `R-1017` are still in `dim_riders`. We removed bad
+> **rentals**, not **riders**. Check: `dbtf show --select dim_riders --limit 5`
 
 <details>
 <summary>▶ Solution: the fix in <code>stg_rentals.sql</code></summary>
@@ -184,7 +183,7 @@ to:
 
 ```sql
 select * from final
-where mph <= 30   -- no Saiyan-speed rides
+where mph <= 30   -- drop impossible rides
 ```
 
 **In real life**, you might *flag* these instead of deleting them

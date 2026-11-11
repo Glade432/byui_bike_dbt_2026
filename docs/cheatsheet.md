@@ -30,6 +30,8 @@ old dbt-core.
 {{ ref('stg_riders') }}                  -- everything else: models dbt built
 ```
 
+Casting and types: see the [SQL types + casting primer](sql_types_and_casting.md).
+
 ## Git
 
 **The VS Code buttons are easiest:** Source Control (`Ctrl+Shift+G`) → message → **Commit** →

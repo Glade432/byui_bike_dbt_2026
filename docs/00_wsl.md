@@ -68,6 +68,9 @@ sudo apt update && sudo apt upgrade -y
 
 It asks for your password (invisible again). This takes a couple of minutes.
 
+> 💡 `N: Some packages may have been kept back due to phasing` at the end? Harmless. Ubuntu
+> rolls some updates out slowly. Keep going.
+
 ## D · Point Linux at your `.dbt` folder (symlink FIRST)
 
 Your `profiles.yml` and `bigquery-key.json` already live in Windows, in `C:\Users\<you>\.dbt`.
@@ -82,31 +85,57 @@ shortcut that makes Linux's `~/.dbt` *be* your Windows `.dbt` folder.
    ls /mnt/c/Users/
    ```
 
-   You'll see something like `Default  Public  Jane  desktop.ini`. Yours is the one that
-   isn't `Default`, `Public`, or `All Users`.
+   You'll see something like:
 
-2. Make the link (replace `Jane`):
+   ```
+   'All Users'   Default  'Default User'   Public   WsiAccount   desktop.ini   jane
+   ```
+
+   **Ignore** `All Users`, `Default`, `Default User`, `Public`, `WsiAccount`, and
+   `desktop.ini`. Those are Windows system folders. **Yours is the one left over**
+   (here, `jane`).
+
+2. **Peek before you link.** Replace `jane` with yours, and keep the **`/Users/`** part:
 
    ```bash
-   ln -s /mnt/c/Users/Jane/.dbt ~/.dbt
+   ls /mnt/c/Users/jane/.dbt
+   ```
+
+   ✅ You see `profiles.yml` and `bigquery-key.json`. If you get `No such file or directory`,
+   check the spelling and make sure `/Users/` is in there (`/mnt/c/jane` ❌,
+   `/mnt/c/Users/jane` ✅).
+
+   > ⚠️ **Spelling is right, but there's still no `.dbt` folder?** You haven't done
+   > [student_gcp_setup](https://github.com/MLMecham/student_gcp_setup) yet. Make the folder
+   > now (`mkdir -p /mnt/c/Users/jane/.dbt`), finish this page, and **raise your hand** so we
+   > can get your key into it.
+
+3. Make the link (the **same path** you just peeked at):
+
+   ```bash
+   ln -s /mnt/c/Users/jane/.dbt ~/.dbt
    ```
 
    **Space in your Windows username?** Use quotes: `ln -s "/mnt/c/Users/Jane Doe/.dbt" ~/.dbt`
 
-3. Check it:
+4. Check the link:
 
    ```bash
-   ls ~/.dbt
+   ls -la ~ | grep .dbt
    ```
 
-✅ **Check:** you see `profiles.yml` and `bigquery-key.json` (the files from
-student_gcp_setup).
+✅ **Check:** you see an **arrow**:
+`.dbt -> /mnt/c/Users/jane/.dbt`. That arrow *is* the symlink. Now `ls ~/.dbt` shows the
+same files as your Windows folder (`profiles.yml`, `bigquery-key.json`).
+
+> 🧠 **Why doesn't plain `ls` show `.dbt`?** Names starting with a dot are **hidden** in
+> Linux. `ls -a` shows them.
 
 > ⚠️ **`ln: failed to create symbolic link: File exists`?** Something made a real `~/.dbt`
-> first. Run `rmdir ~/.dbt` (this only works if it's empty, so it's safe), then redo step 2.
+> first. Run `rmdir ~/.dbt` (this only works if it's empty, so it's safe), then redo step 3.
 >
-> ⚠️ **`ls ~/.dbt` is empty or "No such file"?** Wrong Windows username in step 2. Run
-> `rm ~/.dbt` (this deletes only the link) and try again.
+> ⚠️ **`ls ~/.dbt` is empty or "No such file"?** Wrong path in step 3. Run
+> `rm ~/.dbt` (this deletes only the link, not your files) and redo steps 2–3.
 
 ## E · Git + GitHub
 
@@ -133,8 +162,13 @@ Answer the questions with the arrow keys + Enter:
 | Authenticate Git with your GitHub credentials? | **Yes** |
 | How would you like to authenticate? | **Login with a web browser** |
 
-It shows a **one-time code** (like `ABCD-1234`). Copy it. If no browser opens, go to
-<https://github.com/login/device> in your normal Windows browser and paste the code.
+It shows a **one-time code** (like `ABCD-1234`). Copy it, then press Enter.
+
+![gh auth login one-time code](../images/00-gh-auth-code.png)
+
+**`Failed opening a web browser` is normal in WSL.** Linux can't open your Windows browser.
+Open <https://github.com/login/device> in your normal Windows browser yourself, paste the
+code, and approve.
 
 ✅ **Check:** `gh auth status` says **Logged in to github.com**.
 
@@ -146,6 +180,10 @@ Python package, so there's no `pip` and no `uv sync` for it.
 ```bash
 curl -fsSL https://public.cdn.getdbt.com/fs/install/install.sh | sh -s -- --update
 ```
+
+Success looks like this: a big **dbt** logo, then **`Added alias dbtf`** at the bottom.
+
+![Fusion installer success](../images/00-fusion-install.png)
 
 The installer adds a shortcut called `dbtf`, but **only for new terminals**. Load it now:
 
@@ -184,8 +222,21 @@ uv --version
 VS Code stays installed on **Windows**. One extension lets it reach into Linux.
 
 1. In VS Code (Windows): **Extensions** (`Ctrl+Shift+X`) → search **WSL** → install the one by
-   **Microsoft**.
-2. Back in the **Ubuntu** terminal:
+   **Microsoft** (blue check ✔).
+
+   ![WSL extension](../images/00-vscode-wsl-extension.png)
+
+2. **While you're in Extensions, check for the dbt extension:** search **dbt**. The right one
+   is called just **dbt**, by **dbt Labs LLC** with the blue check ✔. **Not** "Power User for
+   dbt" and **not** "vscode-dbt".
+
+   ![dbt extension by dbt Labs LLC](../images/00-dbt-extension.png)
+
+   Installed already (it says **Uninstall**)? 👍 Not installed? Click **Install**. Either way
+   you'll still install it **into WSL** in step 4: Windows and WSL keep separate extension
+   lists.
+
+3. Back in the **Ubuntu** terminal:
 
    ```bash
    code .
@@ -196,9 +247,9 @@ VS Code stays installed on **Windows**. One extension lets it reach into Linux.
 
 ✅ **Check:** the **bottom-left corner** of VS Code says **`WSL: Ubuntu`**.
 
-3. Install the **dbt extension** *into WSL*: **Extensions** → search **dbt** → pick the
-   official one by **dbt Labs** → click **Install in WSL: Ubuntu**.
-4. When it asks you to **register**, use your **university email**. (Not prompted?
+4. Install the **dbt extension** *into WSL*: in this new window, **Extensions** → search
+   **dbt** → the same **dbt Labs LLC** one → click **Install in WSL: Ubuntu**.
+5. When it asks you to **register**, use your **university email**. (Not prompted?
    `Ctrl+Shift+P` → type `register` → **dbt: Register dbt extension**.)
 
 > 💡 Your Windows extensions don't automatically exist in WSL. If an extension says

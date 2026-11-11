@@ -116,10 +116,10 @@ dbtf show --select raw_riders
    ```
 
    Three riders were loaded twice: `R-1009`, `R-1023`, and `R-1030`.
-3. **Two Son Gokus:**
+3. **Two Jordan Smiths:**
 
    ```bash
-   dbtf show --inline "select * from {{ ref('raw_riders') }} where full_name = 'Son Goku'"
+   dbtf show --inline "select * from {{ ref('raw_riders') }} where full_name = 'Jordan Smith'"
    ```
 
    Same name, but a **different `id`** and a different signup date. **Are these duplicates?**

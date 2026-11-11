@@ -48,20 +48,20 @@ qualify row_number() over (
 </td></tr>
 </table>
 
-Yes, they're identical. 🙂 What it does, using Vegeta (loaded twice):
+Yes, they're identical. What it does, using rider `R-1009` (loaded twice):
 
 | id | full_name | `row_number() over (partition by id ...)` | kept? |
 |---|---|---|---|
-| R-1009 | Prince Vegeta | **1** | ✅ |
-| R-1009 | Prince Vegeta | **2** | ❌ |
-| R-1017 | Son Goku | **1** | ✅ |
-| R-1042 | Son Goku | **1** | ✅ |
+| R-1009 | Marcus Reed | **1** | ✅ |
+| R-1009 | Marcus Reed | **2** | ❌ |
+| R-1017 | Jordan Smith | **1** | ✅ |
+| R-1042 | Jordan Smith | **1** | ✅ |
 
 `partition by id` restarts the count for every `id`. `= 1` keeps the first row of each group.
 
-> 🐉 **Both Gokus get `1`** because they have **different ids**. They're two different
-> people who happen to share a name. **Always dedup on the primary key, never on a name.**
-> (A test on page 6 checks that both Gokus survive.)
+> ⚠️ **Both Jordan Smiths get `1`** because they have **different ids**. They're two
+> different people who happen to share a name. **Always dedup on the primary key, never on a
+> name.** (A test on page 6 checks that both survive.)
 
 <details>
 <summary>▶ What QUALIFY is short for (the long way)</summary>
@@ -81,6 +81,10 @@ where rn = 1
 
 ## BigQuery casting cheat sheet
 
+> 📘 **New to SQL types?** Read the 5-minute
+> [SQL data types + casting primer](sql_types_and_casting.md) first. It explains *why*
+> `'10' < '9'` is true.
+
 | From (text) | To | BigQuery |
 |---|---|---|
 | `'2026-06-01 09:15:00'` | timestamp | `cast(STARTED_AT as timestamp)` |
@@ -90,7 +94,7 @@ where rn = 1
 | timestamp | date | `date(started_at)` |
 | two timestamps | minutes between | `timestamp_diff(ended_at, started_at, minute)` |
 | `a / b` where `b` might be 0 | no crash | `safe_divide(a, b)` |
-| `'Son Goku'` | `'Son'` | `split(full_name, ' ')[offset(0)]` |
+| `'Jordan Smith'` | `'Jordan'` | `split(full_name, ' ')[offset(0)]` |
 
 > 🧠 **Column names in BigQuery aren't case-sensitive.** `ID`, `id`, and `Id` all work. We
 > still rename the SHOUTING ones so everything downstream looks the same.
@@ -138,10 +142,10 @@ dbtf run --select stg_riders
 dbtf show --select stg_riders
 ```
 
-✅ **Check:** there's **no `ssn` column**, and both Gokus are there:
+✅ **Check:** there's **no `ssn` column**, and both Jordan Smiths are there:
 
 ```bash
-dbtf show --inline "select * from {{ ref('stg_riders') }} where full_name = 'Son Goku'"
+dbtf show --inline "select * from {{ ref('stg_riders') }} where full_name = 'Jordan Smith'"
 ```
 
 <details>
@@ -156,7 +160,7 @@ with source as (
 
 deduped as (
 
-    -- dedup on the PRIMARY KEY (id), never on the name: there are two Son Gokus!
+    -- dedup on the PRIMARY KEY (id), never on the name: there are two Jordan Smiths!
     select *
     from source
     qualify row_number() over (partition by id order by signed_up_on) = 1
@@ -177,8 +181,6 @@ renamed as (
 
 select * from renamed
 ```
-
-**"Prince Vegeta" → first_name = "Prince"?** Yep. Real data is messy. 👑
 
 </details>
 

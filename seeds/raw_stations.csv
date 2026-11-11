@@ -2,7 +2,7 @@ id,station_name,city,opened_at,docks,map_color_hex
 ST-01,Porter Park Hub,Rexburg,2025-04-15T00:00:00,24,#2E86AB
 ST-02,Main Street Dock,Rexburg,2025-05-01T00:00:00,12,#F18F01
 ST-03,Snake River Greenbelt,Idaho Falls,2025-06-10T00:00:00,30,#3BB273
-ST-04,Capsule Corp Plaza,Idaho Falls,2025-08-20T00:00:00,18,#7768AE
+ST-04,Civic Center Plaza,Idaho Falls,2025-08-20T00:00:00,18,#7768AE
 ST-03,Snake River Greenbelt,Idaho Falls,2025-06-10T00:00:00,30,#3BB273
 ST-05,Rigby Depot,Rigby,2025-09-05T00:00:00,10,#E15554
-ST-06,Hyperbolic Time Trailhead,Rexburg,2026-05-30T00:00:00,20,#E1BC29
+ST-06,Teton River Trailhead,Rexburg,2026-05-30T00:00:00,20,#E1BC29
