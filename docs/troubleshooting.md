@@ -23,7 +23,7 @@
 | `dbtf: command not found` but `dbt --version` says 2.x | `source ~/.bashrc` or open a new terminal ([details](00_wsl.md#f--dbt-fusion)) |
 | `dbt --version` says **1.x** | That's old dbt-core from a Python venv. Run `deactivate` and use `dbtf`. |
 | `Could not find profile named 'university_workshop'` | Typo in the block name, or it's indented inside another block. It starts at the far left. |
-| keyfile / `No such file or directory` | Your keyfile is a `C:\` path. In WSL it must be `/mnt/c/...`. Run `readlink -f ~/.dbt/bigquery-key.json`. |
+| `Keyfile '...' does not exist` | Either it's a `C:\` path (WSL needs `/mnt/c/...`), or your key has a different name. Run `readlink -e ~/.dbt/*.json` and paste exactly what it prints. |
 | `Not found: Dataset ..._raw` | You haven't seeded yet: `dbtf seed` |
 | Dataset "was not found in location" | `location:` in your profile must match your other datasets (usually `US`). |
 | `dbt_utils` / `date_spine` is undefined | `dbtf deps` |

@@ -15,6 +15,27 @@
 
 > 🎯 **Finishing this page is today's goal.**
 
+## First: make the three staging files
+
+The repo doesn't come with any staging models. You write them. Make three empty files in
+`models/staging/` (next to your `_sources.yml`):
+
+```bash
+touch models/staging/stg_riders.sql models/staging/stg_stations.sql models/staging/stg_rentals.sql   # creates 3 empty files
+ls models/staging/                                                                                   # check they're there
+```
+
+✅ **Check:** you see `_sources.yml`, `stg_rentals.sql`, `stg_riders.sql`, `stg_stations.sql`.
+
+(Prefer clicking? In the VS Code Explorer, right-click **`staging`** → **New File...** → type
+the name. Do it three times.)
+
+> 🧠 **Naming convention:** `stg_` + the table name without `raw_`. One staging model per
+> source table, always.
+
+> 💡 dbt **ignores empty files**, so it's fine to leave two empty while you work on the
+> first. They'll start building once they have SQL in them.
+
 ---
 
 ## Dedup with `QUALIFY`: the same as Snowflake
@@ -103,7 +124,7 @@ where rn = 1
 
 ## Model 1 · `stg_riders` (guided)
 
-Create **`models/staging/stg_riders.sql`** and fill in the `____` blanks:
+Open **`models/staging/stg_riders.sql`**, paste this in, and fill in the `____` blanks:
 
 ```sql
 with source as (
@@ -188,7 +209,7 @@ select * from renamed
 
 ## Model 2 · `stg_stations` (your turn)
 
-Create **`models/staging/stg_stations.sql`**. Same shape as `stg_riders`. Here's the spec:
+Open **`models/staging/stg_stations.sql`**. Same shape as `stg_riders`. Here's the spec:
 
 | Raw column | Do this | Output column |
 |---|---|---|
@@ -201,6 +222,43 @@ Create **`models/staging/stg_stations.sql`**. Same shape as `stg_riders`. Here's
 | `map_color_hex` | **drop** | — |
 
 Dedup on `id` (remember `ST-03` showed up twice).
+
+Start from this skeleton. It's the same 3 CTEs as `stg_riders`: **source → deduped →
+renamed**. Use the table above to fill in the `____` blanks:
+
+```sql
+with source as (
+
+    -- 1. grab the raw table
+    select * from {{ source('bike_raw', '____') }}
+
+),
+
+deduped as (
+
+    -- 2. keep one row per id
+    select *
+    from source
+    qualify row_number() over (partition by ____ order by opened_at) = 1
+
+),
+
+renamed as (
+
+    -- 3. rename, cast, add new columns. Only list the columns you KEEP.
+    select
+        ____                                as station_id,
+        station_name,
+        city,
+        date(cast(____ as timestamp))       as opened_on,
+        ____,
+        ____ >= 20                          as is_large_station
+    from deduped
+
+)
+
+select * from renamed
+```
 
 ```bash
 dbtf run --select stg_stations
@@ -250,7 +308,7 @@ select * from renamed
 
 ## Model 3 · `stg_rentals` (your turn, the big one)
 
-Create **`models/staging/stg_rentals.sql`**. This table has SHOUTING column names:
+Open **`models/staging/stg_rentals.sql`**. This table has SHOUTING column names:
 
 | Raw column | Do this | Output column |
 |---|---|---|
@@ -268,11 +326,44 @@ Create **`models/staging/stg_rentals.sql`**. This table has SHOUTING column name
 
 Dedup on `ID`.
 
-**Hint:** the new columns need the *cast* timestamps, so add a **4th CTE** after `renamed`:
+This one has a **4th CTE**, `final`. The new columns need the timestamps **after** they've
+been cast, so they're calculated from `renamed`. Fill in the `____` blanks:
 
 ```sql
+with source as (
+
+    -- 1. grab the raw table
+    select * from {{ source('bike_raw', '____') }}
+
+),
+
+deduped as (
+
+    -- 2. keep one row per ID
+    select *
+    from source
+    qualify row_number() over (partition by ____ order by STARTED_AT) = 1
+
+),
+
+renamed as (
+
+    -- 3. rename + cast. Only list the columns you KEEP.
+    select
+        ID                                  as rental_id,
+        RIDER                               as ____,
+        STATION_ID                          as ____,
+        cast(STARTED_AT as ____)            as started_at,
+        cast(ENDED_AT as ____)              as ended_at,
+        MILES                               as miles,
+        PRICE_CENTS / ____                  as price_dollars
+    from deduped
+
+),
+
 final as (
 
+    -- 4. new columns, built from the clean columns in `renamed`
     select
         *,
         date(started_at)                              as rental_date,
@@ -284,6 +375,8 @@ final as (
 
 select * from final
 ```
+
+> 💡 **`timestamp_diff(later, earlier, minute)`**: the later time goes first.
 
 ```bash
 dbtf run --select stg_rentals

@@ -57,6 +57,23 @@ dollars, junk columns, duplicate rows, and an SSN. Staging cleans all of that up
 > data is loaded by a tool like Fivetran, not by dbt. So we treat the raw tables like the real
 > thing and use **`source()`**. That's also what you'll do at the workshop.
 
+## Break it first 💥
+
+`source()` only works for tables you've **declared** in a `_sources.yml`. You haven't made
+that file yet, so try it and watch it fail:
+
+```bash
+dbtf show --inline "select * from {{ source('bike_raw', 'raw_stations') }}"
+```
+
+```
+[error] [DependencyNotFound (dbt1048)]: Source 'bike_raw.raw_stations' not found in project.
+```
+
+The table **is** in BigQuery (you just seeded it), but dbt doesn't know about it until you tell
+it. That's the whole job of `_sources.yml`. Remember this error: you'll see it again whenever
+you forget to declare a source, or typo its name.
+
 ## Your turn: make `models/staging/_sources.yml`
 
 Create the file **`models/staging/_sources.yml`** and fill in the blanks:
@@ -72,12 +89,29 @@ sources:
       - name: ________
 ```
 
+**What goes in the blanks?** One table name each. The table names are the seed file names
+**without** `.csv`. To list them:
+
+```bash
+ls seeds/      # shows the seed files: each name minus ".csv" is a table name
+```
+
+```
+raw_rentals.csv  raw_riders.csv  raw_stations.csv
+```
+
+So the first blank becomes `raw_rentals`, and so on. **Replace all three `________`**.
+Leftover blanks cause a `Duplicate definition for table '________'` warning and a
+`Source ... not found` error.
+
 **What's `schema: "{{ target.schema }}_raw"`?** `target.schema` is the `dataset:` from your
 profile (example: `dbt_smith_john`). `dbtf seed` put the CSVs in `dbt_smith_john_raw`. This
 line builds that name for **every** student automatically, so nobody has to hard-code their
 own dataset.
 
 ### ✅ Check
+
+Save the file, then run **the same command that failed** above:
 
 ```bash
 dbtf show --inline "select * from {{ source('bike_raw', 'raw_stations') }}"

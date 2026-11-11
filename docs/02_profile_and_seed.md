@@ -43,10 +43,13 @@ Copy `project:` and `dataset:` from your existing `gcp_setup:` block. **Don't co
 > | `gcp_setup` | Windows (class project) | `C:\Users\Jane\.dbt\bigquery-key.json` |
 > | `university_workshop` | WSL (today + workshop) | `/mnt/c/Users/Jane/.dbt/bigquery-key.json` |
 >
-> **Not sure of the exact path?** This prints it for you:
+> **Not sure of the exact path, or what your key is named?** This finds every `.json` key in
+> your `.dbt` folder and prints its full Linux path. Paste exactly what it prints:
 > ```bash
-> readlink -f ~/.dbt/bigquery-key.json
+> readlink -e ~/.dbt/*.json
 > ```
+> Prints nothing? There's no key in `.dbt` yet. Go back to
+> [student_gcp_setup](https://github.com/MLMecham/student_gcp_setup).
 
 Save the file.
 
@@ -66,7 +69,7 @@ dbtf debug
 | Error says | Fix |
 |---|---|
 | profile **not found** / `university_workshop` | Block name typo, or you pasted it *inside* another block. It must start at the far left, with no spaces. |
-| **keyfile** / No such file | Wrong path. Run `readlink -f ~/.dbt/bigquery-key.json` and paste exactly that. |
+| **keyfile** / does not exist | Wrong path or wrong file name (yours might not be `bigquery-key.json`). Run `readlink -e ~/.dbt/*.json` and paste exactly what it prints. |
 | **location** / dataset not found in location | `location:` must match `gcp_setup` (usually `US`). |
 | `dbtf: command not found` | See the [dbtf gotcha](00_wsl.md#f--dbt-fusion). |
 
