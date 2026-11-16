@@ -1,0 +1,8 @@
+sources:
+  - name: bike_raw
+    description: "Raw bike-rental tables, loaded with dbt seed."
+    schema: "{{ target.schema }}_raw"
+    tables:
+      - name: raw_rentals
+      - name: raw_riders
+      - name: raw_stations
